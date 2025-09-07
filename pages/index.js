@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 
 const initialTeams = [
-  { id: 1, name: 'Dan & Bean', players: ['Dan', 'Bean'], points: 0 },
-  { id: 2, name: 'Rob & TJ', players: ['Rob', 'TJ'], points: 0 },
+  { id: 1, name: 'Rob & Bean', players: ['Rob', 'Bean'], points: 0 },
+  { id: 2, name: 'Dan & TJ', players: ['Dan', 'TJ'], points: 0 },
   { id: 3, name: 'Weedy & Pear', players: ['Weedy', 'Pear'], points: 0 },
-  { id: 4, name: 'Nova & Neil', players: ['Nova', 'Neil'], points: 0 },
-  { id: 5, name: 'Bulby & JHD', players: ['Bulby', 'JHD'], points: 0 },
+  { id: 4, name: 'Nova & Bulby', players: ['Nova', 'Bulby'], points: 0 },
+  { id: 5, name: 'Neil & JHD', players: ['Neil', 'JHD'], points: 0 },
 ];
 
 const initialSchedule = [
@@ -110,16 +110,18 @@ export default function Home() {
   const ratingBtn = { ...buttonStyle, flex:'1 1 18%', margin:'2px'};
 
   return (
-    <div style={{ fontFamily:'Poppins,sans-serif', padding:'10px', background:'#f0f4f7', minHeight:'100vh', position:'relative' }}>
+    <div style={{ fontFamily:'Poppins,sans-serif', padding:'10px', background:'#f0f4f7', minHeight:'100vh' }}>
       
-      {/* Header with watermark */}
+      {/* Header */}
       <div style={{ textAlign:'center', marginBottom:'15px', position:'relative' }}>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Paddle_tennis_racket.png/200px-Paddle_tennis_racket.png" alt="padle" style={{ width:'80px', margin:'0 auto 10px auto', position:'relative', zIndex:2 }}/>
-        <h1 style={{ margin:'0', fontSize:'1.8rem', color:'#333', position:'relative', zIndex:2 }}>🎾 Padle League</h1>
-        {/* Watermark */}
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Paddle_tennis_court.svg/512px-Paddle_tennis_court.svg.png" 
-             alt="watermark" 
-             style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', opacity:0.05, width:'80%', zIndex:1 }} />
+        <img 
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Paddle_tennis_racket.png/200px-Paddle_tennis_racket.png" 
+          alt="padle" 
+          style={{ width:'80px', margin:'0 auto 10px auto', position:'relative', zIndex:2 }}
+        />
+        <h1 style={{ margin:'0', fontSize:'1.8rem', color:'#333', position:'relative', zIndex:2 }}>
+          🎾 Padle League
+        </h1>
       </div>
 
       {!admin && <button onClick={enterAdmin} style={{ ...orangeBtn, width:'100%', marginBottom:'10px'}}>Enter Admin Mode</button>}
