@@ -116,7 +116,7 @@ export default function Home() {
       <div style={{ textAlign:'center', marginBottom:'15px', position:'relative' }}>
         
         <h1 style={{ margin:'0', fontSize:'1.8rem', color:'#333', position:'relative', zIndex:2 }}>
-          🎾 Padle League
+          🎾 Padel League
         </h1>
       </div>
 
