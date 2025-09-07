@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 
 const initialTeams = [
-  { id: 1, name: 'Dan & Bean', players: ['Dan', 'Bean'], points: 0 },
-  { id: 2, name: 'Bulby & TJ', players: ['Bulby', 'TJ'], points: 0 },
-  { id: 3, name: 'Neil & Pear', players: ['Neil', 'Pear'], points: 0 },
-  { id: 4, name: 'Nova & Weedy', players: ['Nova', 'Weedy'], points: 0 },
-  { id: 5, name: 'Rob & JHD', players: ['Rob', 'JHD'], points: 0 },
+  { id: 1, name: 'Rob & Bean', players: ['Rob', 'Bean'], points: 0 },
+  { id: 2, name: 'Dan & TJ', players: ['Dan', 'TJ'], points: 0 },
+  { id: 3, name: 'Weedy & Pear', players: ['Weedy', 'Pear'], points: 0 },
+  { id: 4, name: 'Nova & Bulby', players: ['Nova', 'Bulby'], points: 0 },
+  { id: 5, name: 'Neil & JHD', players: ['Neil', 'JHD'], points: 0 },
 ];
 
 const initialSchedule = [
@@ -39,42 +39,32 @@ export default function Home() {
 
   const enterAdmin = () => {
     const pw = prompt("Enter admin password:");
-    if (pw === "danisgreat") {
-      setAdmin(true);
-      alert("Admin mode enabled!");
-    } else alert("Wrong password.");
+    if (pw === "danisgreat") { setAdmin(true); alert("Admin mode enabled!"); }
+    else alert("Wrong password.");
   };
 
   const recordResult = (matchId, winnerId) => {
     const scoreInput = prompt("Enter match score (comma-separated sets, e.g. 6-3,6-4):");
     if (!scoreInput) return;
     const sets = scoreInput.split(",").map(s=>s.trim());
-    if (!sets.every(s=>validSetScores.includes(s))) {
-      alert("Invalid score entered. Allowed: " + validSetScores.join(", "));
-      return;
-    }
+    if (!sets.every(s=>validSetScores.includes(s))) { alert("Invalid score entered."); return; }
     const updated = { ...results, [matchId]: { winnerId, score: sets.join(", ") } };
     setResults(updated);
-
-    // Update points
-    const newTeams = teams.map(t=> t.id === winnerId ? { ...t, points: t.points + 3 } : t);
+    const newTeams = teams.map(t=> t.id===winnerId ? { ...t, points: t.points + 3 } : t);
     setTeams(newTeams);
   };
 
   const editMatch = (matchId) => {
-    if (!admin) return;
-    const winner = prompt("Enter winner team ID (1-5):", results[matchId]?.winnerId || "");
-    if (!winner || isNaN(winner) || winner<1 || winner>5) return;
-    const score = prompt("Enter new score (comma-separated sets):", results[matchId]?.score || "");
-    if (!score) return;
+    if(!admin) return;
+    const winner = prompt("Enter winner team ID (1-5):", results[matchId]?.winnerId||"");
+    if(!winner || isNaN(winner) || winner<1 || winner>5) return;
+    const score = prompt("Enter new score (comma-separated sets):", results[matchId]?.score||"");
+    if(!score) return;
     const sets = score.split(",").map(s=>s.trim());
-    if (!sets.every(s=>validSetScores.includes(s))) { alert("Invalid score"); return; }
-
+    if(!sets.every(s=>validSetScores.includes(s))) { alert("Invalid score"); return; }
     const updated = { ...results, [matchId]: { winnerId: parseInt(winner), score: sets.join(", ") } };
     setResults(updated);
-
-    // Recalculate points
-    const pointsReset = teams.map(t=>({ ...t, points: 0 }));
+    const pointsReset = teams.map(t=>({ ...t, points:0 }));
     Object.values(updated).forEach(r=>{
       const team = pointsReset.find(t=>t.id===r.winnerId);
       if(team) team.points+=3;
@@ -84,8 +74,8 @@ export default function Home() {
 
   const deleteMatch = (matchId) => {
     if(!admin) return;
-    const updated = { ...results }; delete updated[matchId]; setResults(updated);
-    const pointsReset = teams.map(t=>({ ...t, points:0 }));
+    const updated={...results}; delete updated[matchId]; setResults(updated);
+    const pointsReset=teams.map(t=>({...t, points:0}));
     Object.values(updated).forEach(r=>{
       const team = pointsReset.find(t=>t.id===r.winnerId);
       if(team) team.points+=3;
@@ -94,53 +84,42 @@ export default function Home() {
   };
 
   const clearLastMatch = () => { if(!admin) return; const ids=Object.keys(results).map(Number); if(!ids.length) return; deleteMatch(Math.max(...ids)); };
-  const clearAllMatches = () => { if(!admin || !confirm("Clear ALL matches?")) return; setResults({}); setTeams(teams.map(t=>({ ...t, points:0 }))); };
+  const clearAllMatches = () => { if(!admin||!confirm("Clear ALL matches?")) return; setResults({}); setTeams(teams.map(t=>({...t, points:0}))); };
 
   const recordRating = (player, score) => {
     if(!selectedTeam) { alert("Select your team first"); return; }
     const current = ratings[player] || [];
     if(current.some(r=>r.fromTeam===selectedTeam)&&!admin){ alert("Your team already rated"); return; }
-    const updated = { ...ratings, [player]: [...current, { fromTeam:selectedTeam, score }] };
+    const updated = {...ratings, [player]:[...current,{fromTeam:selectedTeam, score}]};
     setRatings(updated);
   };
 
-  const editRating = (player,index) => {
-    if(!admin) return;
-    const newScore = prompt("Enter new score (1-5):");
-    if(!newScore || isNaN(newScore) || newScore<1 || newScore>5) return;
-    const updated = { ...ratings }; updated[player][index].score = parseInt(newScore); setRatings(updated);
-  };
+  const editRating = (player,index) => { if(!admin) return; const newScore=prompt("Enter new score (1-5):"); if(!newScore||isNaN(newScore)||newScore<1||newScore>5) return; const updated={...ratings}; updated[player][index].score=parseInt(newScore); setRatings(updated); };
+  const deleteRating = (player,index) => { if(!admin) return; const updated={...ratings}; updated[player].splice(index,1); setRatings(updated); };
 
-  const deleteRating = (player,index) => { if(!admin) return; const updated = { ...ratings }; updated[player].splice(index,1); setRatings(updated); };
+  const getAverageRating = (player) => { const scores=(ratings[player]||[]).map(r=>r.score); if(!scores.length) return 0; return (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(2); };
 
-  const getAverageRating = (player) => {
-    const scores = (ratings[player]||[]).map(r=>r.score);
-    if(!scores.length) return 0; return (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(2);
-  };
-
-  const clearLastRating = () => {
-    let lastPlayer=null,lastIndex=-1;
-    for(const [player,rList] of Object.entries(ratings)){
-      if(rList.length>0){ lastPlayer=player; lastIndex=rList.length-1; }
-    }
-    if(lastPlayer!==null){ const updated={...ratings}; updated[lastPlayer].splice(lastIndex,1); setRatings(updated); }
-  };
-
+  const clearLastRating = () => { let lastPlayer=null,lastIndex=-1; for(const [player,rList] of Object.entries(ratings)){ if(rList.length>0){ lastPlayer=player; lastIndex=rList.length-1; } } if(lastPlayer!==null){ const updated={...ratings}; updated[lastPlayer].splice(lastIndex,1); setRatings(updated); } };
   const clearAllRatings = () => { if(confirm("Clear ALL ratings?")) setRatings({}); };
 
-  // -------------------- STYLES --------------------
   const buttonStyle = { padding:'10px 15px', borderRadius:'12px', border:'none', cursor:'pointer', fontWeight:'bold', transition:'0.2s'};
   const orangeBtn = { ...buttonStyle, background:'#FF9800', color:'#fff'};
   const redBtn = { ...buttonStyle, background:'#e53935', color:'#fff'};
   const greenBtn = { ...buttonStyle, background:'#4CAF50', color:'#fff'};
   const blueBtn = { ...buttonStyle, background:'#2196F3', color:'#fff'};
-  const ratingBtn = { ...buttonStyle, background:'#FFD700', flex:'1 1 18%', margin:'2px'};
+  const ratingBtn = { ...buttonStyle, flex:'1 1 18%', margin:'2px'};
 
   return (
-    <div style={{ fontFamily:'Poppins,sans-serif', padding:'10px', background:'#f0f4f7', minHeight:'100vh' }}>
-      <div style={{ textAlign:'center', marginBottom:'15px' }}>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Paddle_tennis_racket.png/200px-Paddle_tennis_racket.png" alt="padle" style={{ width:'80px', margin:'0 auto 10px auto' }}/>
-        <h1 style={{ margin:'0', fontSize:'1.8rem', color:'#333' }}>🎾 Padle League</h1>
+    <div style={{ fontFamily:'Poppins,sans-serif', padding:'10px', background:'#f0f4f7', minHeight:'100vh', position:'relative' }}>
+      
+      {/* Header with watermark */}
+      <div style={{ textAlign:'center', marginBottom:'15px', position:'relative' }}>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Paddle_tennis_racket.png/200px-Paddle_tennis_racket.png" alt="padle" style={{ width:'80px', margin:'0 auto 10px auto', position:'relative', zIndex:2 }}/>
+        <h1 style={{ margin:'0', fontSize:'1.8rem', color:'#333', position:'relative', zIndex:2 }}>🎾 Padle League</h1>
+        {/* Watermark */}
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Paddle_tennis_court.svg/512px-Paddle_tennis_court.svg.png" 
+             alt="watermark" 
+             style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', opacity:0.05, width:'80%', zIndex:1 }} />
       </div>
 
       {!admin && <button onClick={enterAdmin} style={{ ...orangeBtn, width:'100%', marginBottom:'10px'}}>Enter Admin Mode</button>}
@@ -210,14 +189,19 @@ export default function Home() {
       </select>
 
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(220px,1fr))', gap:'12px' }}>
-        {teams.flatMap(t=>t.players).map(player=>(
+        {teams.flatMap(t=>t.players).map(player=>{
+          const userRating = ratings[player]?.find(r=>r.fromTeam===selectedTeam)?.score;
+          return (
           <div key={player} style={{ background:'#fff', padding:'12px', borderRadius:'12px', boxShadow:'0 2px 6px rgba(0,0,0,0.1)'}}>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center'}}>
               <strong>{player}</strong>
               <span>⭐ {getAverageRating(player)}</span>
             </div>
             <div style={{ display:'flex', flexWrap:'wrap', marginTop:'8px'}}>
-              {[1,2,3,4,5].map(s=><button key={s} onClick={()=>recordRating(player,s)} style={ratingBtn}>{s}</button>)}
+              {[1,2,3,4,5].map(s=>{
+                const highlight = s===userRating ? {border:'2px solid #FF5722'}:{};
+                return <button key={s} onClick={()=>recordRating(player,s)} style={{...ratingBtn,...highlight}}>{s}</button>
+              })}
             </div>
             <div style={{marginTop:'10px', fontSize:'13px'}}>
               {ratings[player] && ratings[player].length>0 && (
@@ -238,7 +222,12 @@ export default function Home() {
               )}
             </div>
           </div>
-        ))}
+        )})}
+      </div>
+
+      {/* Footer */}
+      <div style={{ textAlign:'center', marginTop:'25px', color:'#555', fontSize:'13px' }}>
+        Designed and Created by DannyRush Apps
       </div>
     </div>
   )
