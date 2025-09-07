@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 
 const initialTeams = [
   { id: 1, name: 'Dan & Bean', players: ['Dan', 'Bean'], points: 0 },
-  { id: 2, name: 'Rob & TJ', players: ['Rob', 'TJ'], points: 0 },
-  { id: 3, name: 'Weedy & Pear', players: ['Weedy', 'Pear'], points: 0 },
+  { id: 2, name: 'Weedy & TJ', players: ['Weedy', 'TJ'], points: 0 },
+  { id: 3, name: 'Rob & Pear', players: ['Rob', 'Pear'], points: 0 },
   { id: 4, name: 'Nova & Neil', players: ['Nova', 'Neil'], points: 0 },
   { id: 5, name: 'Bulby & JHD', players: ['Bulby', 'JHD'], points: 0 },
 ];
@@ -114,9 +114,7 @@ export default function Home() {
       
       {/* Header */}
       <div style={{ textAlign:'center', marginBottom:'15px', position:'relative' }}>
-
-          style={{ width:'80px', margin:'0 auto 10px auto', position:'relative', zIndex:2 }}
-        />
+        
         <h1 style={{ margin:'0', fontSize:'1.8rem', color:'#333', position:'relative', zIndex:2 }}>
           🎾 Padle League
         </h1>
