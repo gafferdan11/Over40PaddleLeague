@@ -1,7 +1,80 @@
+/* General Reset */
 body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f0f9ff, #cbebff);
+  margin: 0;
+  padding: 20px;
+  color: #222;
 }
-table { border-collapse: collapse; width: 100%; }
-th, td { border: 1px solid #ddd; padding: 8px; }
-button { margin: 2px; }
+
+/* Headings */
+h1, h2 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: #1a237e;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 90%;
+  margin: 10px auto 20px auto;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+th {
+  background: #1976d2;
+  color: white;
+  padding: 10px;
+}
+td {
+  border-bottom: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+tr:hover {
+  background: #f1f1f1;
+}
+
+/* Buttons */
+button {
+  margin: 5px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+button:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+/* Special Button Colors */
+button[style*="background:#4CAF50"] { background: #4CAF50 !important; }
+button[style*="background:#2196F3"] { background: #2196F3 !important; }
+button[style*="background:#FFD700"] { background: #FFD700 !important; }
+button[style*="background:#ff6666"] { background: #e53935 !important; }
+
+/* Ratings Grid */
+div[style*="grid"] {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Cards for Ratings */
+div[style*="border:2px solid"] {
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.2s;
+}
+
+div[styl]()
