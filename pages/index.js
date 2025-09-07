@@ -8,7 +8,7 @@ const initialTeams = [
   { id: 5, name: 'Neil & JHD', players: ['Neil', 'JHD'], points: 0 },
 ];
 
-const schedule = [
+const initialSchedule = [
   [1, 2],
   [3, 4],
   [5, 1],
@@ -19,6 +19,11 @@ const schedule = [
   [5, 3],
   [1, 4],
   [2, 5],
+];
+
+// Valid set scores in Padle (tennis-style)
+const validSetScores = [
+  "6-0","6-1","6-2","6-3","6-4","7-5","7-6"
 ];
 
 export default function Home() {
@@ -56,16 +61,63 @@ export default function Home() {
     }
   };
 
+  // ------------------ MATCH LOGIC ------------------
   const recordResult = (matchId, winnerId) => {
-    if (results[matchId] && !admin) return; // prevent overwrite unless admin
-    const updated = { ...results, [matchId]: winnerId };
+    let score = prompt("Enter match score (comma-separated sets, e.g. 6-3,6-4):");
+    if (!score) return;
+    const sets = score.split(",").map(s => s.trim());
+    if (!sets.every(s => validSetScores.includes(s))) {
+      alert("Invalid score entered. Allowed: " + validSetScores.join(", "));
+      return;
+    }
+    const updated = { ...results, [matchId]: { winnerId, score: sets.join(", ") } };
     setResults(updated);
-    const newTeams = teams.map((t) =>
+
+    const newTeams = teams.map(t =>
       t.id === winnerId ? { ...t, points: t.points + 3 } : t
     );
     setTeams(newTeams);
   };
 
+  const editMatch = (matchId) => {
+    if (!admin) return;
+    const winner = prompt("Enter winner team ID (1-5):", results[matchId]?.winnerId || "");
+    if (!winner || isNaN(winner) || winner < 1 || winner > 5) return;
+    let score = prompt("Enter new score (comma-separated sets):", results[matchId]?.score || "");
+    if (!score) return;
+    const sets = score.split(",").map(s => s.trim());
+    if (!sets.every(s => validSetScores.includes(s))) {
+      alert("Invalid score entered.");
+      return;
+    }
+    const updated = { ...results, [matchId]: { winnerId: parseInt(winner), score: sets.join(", ") } };
+    setResults(updated);
+
+    // Recalculate points
+    const pointsReset = teams.map(t => ({ ...t, points: 0 }));
+    Object.values(updated).forEach(r => {
+      const team = pointsReset.find(t => t.id === r.winnerId);
+      if (team) team.points += 3;
+    });
+    setTeams(pointsReset);
+  };
+
+  const deleteMatch = (matchId) => {
+    if (!admin) return;
+    const updated = { ...results };
+    delete updated[matchId];
+    setResults(updated);
+
+    // Recalculate points
+    const pointsReset = teams.map(t => ({ ...t, points: 0 }));
+    Object.values(updated).forEach(r => {
+      const team = pointsReset.find(t => t.id === r.winnerId);
+      if (team) team.points += 3;
+    });
+    setTeams(pointsReset);
+  };
+
+  // ------------------ RATINGS LOGIC ------------------
   const recordRating = (player, score) => {
     if (!selectedTeam) {
       alert("Select your team before rating!");
@@ -116,3 +168,47 @@ export default function Home() {
           onClick={enterAdmin}
           style={{ background: '#ff6666', color: '#fff', padding: '12px', borderRadius: '8px', width: '100%' }}
         >
+          Enter Admin Mode
+        </button>
+      )}
+      {admin && <p style={{ color: 'green', textAlign: 'center' }}>✅ Admin mode enabled</p>}
+
+      <h2>League Table</h2>
+      <div style={{ overflowX: 'auto' }}>
+        <table>
+          <thead>
+            <tr><th>Team</th><th>Points</th></tr>
+          </thead>
+          <tbody>
+            {teams.sort((a,b)=>b.points-a.points).map(team=>(
+              <tr key={team.id}>
+                <td>{team.name}</td>
+                <td style={{textAlign:'center'}}>{team.points}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Matches</h2>
+      <div>
+        {initialSchedule.map(([t1,t2],i)=>(
+          <div key={i} style={{
+            background:'#fff',
+            margin:'8px 0',
+            padding:'10px',
+            borderRadius:'8px',
+            boxShadow:'0 2px 6px rgba(0,0,0,0.1)'
+          }}>
+            <div style={{ marginBottom:'8px' }}>
+              {teams.find(t=>t.id===t1).name} vs {teams.find(t=>t.id===t2).name}
+            </div>
+            <button
+              onClick={()=>recordResult(i,t1)}
+              style={{ background:'#4CAF50', color:'#fff', padding:'10px', borderRadius:'6px', width:'48%' }}
+            >
+              {teams.find(t=>t.id===t1).name} Win
+            </button>
+            <button
+              onClick={()=>recordResult(i,t2)}
+              style={{ background:'#2196F3',
